@@ -8,7 +8,7 @@ let trainingBusy = false;
 
 
 // ========================================
-// ПЕРЕМЕШИВАНИЕ: АЛГОРИТМ ФИШЕРА — ЙЕТСА
+// ПЕРЕМЕШИВАНИЕ МАССИВА
 // ========================================
 
 function shuffleArray(array) {
@@ -44,6 +44,22 @@ function normalizeAnswer(value) {
 
 
 // ========================================
+// НАЗВАНИЯ РЕЖИМОВ
+// ========================================
+
+function trainingModeName(mode) {
+
+    const names = {
+        "ko-ru": "Корейский → русский",
+        "ru-ko": "Русский → корейский",
+        "listening": "Аудирование"
+    };
+
+    return names[mode] || "";
+}
+
+
+// ========================================
 // НАЧАЛО ТРЕНИРОВКИ
 // ========================================
 
@@ -66,13 +82,19 @@ function startTraining(mode, retryWords = null) {
         return;
     }
 
-    const answerField = mode === "ko-ru"
-        ? "russian"
-        : "korean";
+    if (mode === "listening" && !speechSupported()) {
 
-    const questionField = mode === "ko-ru"
+        alert("Этот браузер не поддерживает озвучку.");
+        return;
+    }
+
+    const answerField = mode === "ru-ko"
         ? "korean"
         : "russian";
+
+    const questionField = mode === "ru-ko"
+        ? "russian"
+        : "korean";
 
     const uniqueAnswers = new Set(
         dictionary.words.map(word =>
@@ -102,6 +124,8 @@ function startTraining(mode, retryWords = null) {
         return;
     }
 
+    stopSpeech();
+
     trainingSession = {
 
         dictionaryId: dictionary.id,
@@ -121,6 +145,7 @@ function startTraining(mode, retryWords = null) {
         ),
 
         index: 0,
+
         correct: 0,
         incorrect: 0,
 
@@ -129,6 +154,26 @@ function startTraining(mode, retryWords = null) {
         answered: false,
         finished: false
     };
+
+    // Исключаем вопросы, для которых
+    // невозможно подобрать неправильные ответы.
+
+    trainingSession.words =
+        trainingSession.words.filter(
+            word => generateOptions(word).length > 0
+        );
+
+    if (trainingSession.words.length === 0) {
+
+        trainingSession = null;
+
+        alert(
+            "В словаре нет подходящих вопросов " +
+            "для выбранного режима."
+        );
+
+        return;
+    }
 
     try {
 
@@ -161,25 +206,26 @@ function generateOptions(word) {
 
     const correctAnswer = word[answerField];
 
-    // У одного слова может быть несколько
-    // допустимых переводов.
-
     const validAnswers = new Set(
+
         session.allWords
+
             .filter(item =>
                 normalizeAnswer(item[questionField]) ===
                 normalizeAnswer(word[questionField])
             )
+
             .map(item =>
                 normalizeAnswer(item[answerField])
             )
     );
 
     const incorrectAnswers = [];
-
     const usedAnswers = new Set(validAnswers);
 
-    const shuffled = shuffleArray(session.allWords);
+    const shuffled = shuffleArray(
+        session.allWords
+    );
 
     for (const item of shuffled) {
 
@@ -197,7 +243,6 @@ function generateOptions(word) {
 
             text: value,
             correct: false
-
         });
 
         if (incorrectAnswers.length === 3) {
@@ -205,14 +250,11 @@ function generateOptions(word) {
         }
     }
 
-    // Если все варианты соответствуют вопросу,
-    // полноценный тест с выбором невозможен.
-
     if (incorrectAnswers.length === 0) {
         return [];
     }
 
-    const options = [
+    return shuffleArray([
 
         {
             text: correctAnswer,
@@ -220,10 +262,27 @@ function generateOptions(word) {
         },
 
         ...incorrectAnswers
+    ]);
+}
 
-    ];
 
-    return shuffleArray(options);
+// ========================================
+// ОЗВУЧКА ТЕКУЩЕГО СЛОВА
+// ========================================
+
+function speakCurrentWord() {
+
+    const session = trainingSession;
+
+    if (!session || session.finished) {
+        return;
+    }
+
+    const word = session.words[session.index];
+
+    if (word) {
+        speakKorean(word.korean);
+    }
 }
 
 
@@ -239,6 +298,8 @@ function renderQuestion() {
         return;
     }
 
+    stopSpeech();
+
     if (session.index >= session.words.length) {
 
         finishTraining();
@@ -249,17 +310,6 @@ function renderQuestion() {
 
     const options = generateOptions(word);
 
-    // Пропускаем неоднозначные вопросы,
-    // для которых нет неправильных вариантов.
-
-    if (options.length === 0) {
-
-        session.words.splice(session.index, 1);
-
-        renderQuestion();
-        return;
-    }
-
     session.answered = false;
     session.options = options;
 
@@ -269,15 +319,17 @@ function renderQuestion() {
         session.index / total * 100
     );
 
+    const listening =
+        session.mode === "listening";
+
+    const reverse =
+        session.mode === "ru-ko";
+
     const questionLanguage =
-        session.mode === "ko-ru"
-            ? "ko"
-            : "ru";
+        reverse ? "ru" : "ko";
 
     const answerLanguage =
-        session.mode === "ko-ru"
-            ? "ru"
-            : "ko";
+        reverse ? "ko" : "ru";
 
     el("quiz").innerHTML = `
 
@@ -296,6 +348,10 @@ function renderQuestion() {
 
         <p class="quiz-dictionary">
             ${escapeHTML(session.dictionaryName)}
+        </p>
+
+        <p class="training-mode-name">
+            ${trainingModeName(session.mode)}
         </p>
 
         <div class="progress-track"
@@ -326,15 +382,58 @@ function renderQuestion() {
         <article class="question-card">
 
             <span class="eyebrow">
-                ВЫБЕРИТЕ ПРАВИЛЬНЫЙ ПЕРЕВОД
+
+                ${listening
+                    ? "ПРОСЛУШАЙТЕ СЛОВО"
+                    : "ВЫБЕРИТЕ ПРАВИЛЬНЫЙ ПЕРЕВОД"}
+
             </span>
 
             <div class="question-word"
-                 lang="${questionLanguage}">
+                 id="question-word"
+                 lang="${questionLanguage}"
+                 ${listening ? "hidden" : ""}>
 
                 ${escapeHTML(
                     word[session.questionField]
                 )}
+
+            </div>
+
+            <div class="speech-controls"
+                 id="quiz-speech-controls"
+                 ${reverse ? "hidden" : ""}>
+
+                <button class="speech-button"
+                        id="speak-question"
+                        type="button"
+                        aria-label="Прослушать корейское слово">
+
+                    <svg viewBox="0 0 24 24"
+                         width="28"
+                         height="28"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+                        <path d="M15 9a4 4 0 0 1 0 6"/>
+                        <path d="M18 6a8 8 0 0 1 0 12"/>
+
+                    </svg>
+
+                </button>
+
+                <span class="speech-caption">
+                    Прослушать
+                </span>
+
+                <p id="quiz-speech-message"
+                   role="status">
+                </p>
 
             </div>
 
@@ -374,7 +473,6 @@ function renderQuestion() {
                 : "Далее"}
 
         </button>
-
     `;
 
     document.querySelectorAll(
@@ -394,6 +492,27 @@ function renderQuestion() {
 
     el("quit-training").onclick =
         quitTraining;
+
+    el("speak-question").onclick =
+        speakCurrentWord;
+
+    el("speak-question").disabled =
+        !speechSupported();
+
+    // Автоматическая озвучка.
+    // В аудировании слово произносится
+    // независимо от настройки autoSpeak.
+
+    if (
+        listening ||
+        (
+            session.mode === "ko-ru" &&
+            speechSettings.autoSpeak
+        )
+    ) {
+
+        speakCurrentWord();
+    }
 }
 
 
@@ -433,9 +552,19 @@ async function checkAnswer(selectedIndex) {
         button.disabled = true;
     });
 
-    try {
+    // Озвучиваем правильное корейское слово
+    // в обратном режиме непосредственно
+    // после действия пользователя.
 
-        // Сначала сохраняем ответ в базе данных.
+    if (
+        session.mode === "ru-ko" &&
+        speechSettings.autoSpeak
+    ) {
+
+        speakCurrentWord();
+    }
+
+    try {
 
         const dictionary = await getDictionary(
             session.dictionaryId
@@ -494,7 +623,7 @@ async function checkAnswer(selectedIndex) {
         return;
     }
 
-    // Обновляем результаты тренировки.
+    // Обновляем счётчики.
 
     if (selected.correct) {
 
@@ -510,17 +639,17 @@ async function checkAnswer(selectedIndex) {
             korean: word.korean,
             russian: word.russian,
 
-            question: word[session.questionField],
+            question:
+                word[session.questionField],
 
             selectedAnswer: selected.text,
 
             correctAnswer:
                 word[session.answerField]
-
         });
     }
 
-    // Подсвечиваем варианты.
+    // Подсвечиваем ответы.
 
     buttons.forEach((button, index) => {
 
@@ -533,13 +662,11 @@ async function checkAnswer(selectedIndex) {
         if (option.correct) {
 
             button.classList.add("correct");
-
             mark.textContent = "✓";
 
         } else if (index === selectedIndex) {
 
             button.classList.add("incorrect");
-
             mark.textContent = "×";
         }
     });
@@ -562,6 +689,26 @@ async function checkAnswer(selectedIndex) {
         feedback.textContent =
             "Правильный ответ: " +
             word[session.answerField];
+    }
+
+    // После ответа в аудировании
+    // показываем написание корейского слова.
+
+    if (session.mode === "listening") {
+
+        el("question-word").hidden = false;
+
+        feedback.textContent +=
+            " · " + word.korean +
+            " — " + word.russian;
+    }
+
+    // В обратном режиме после ответа
+    // становится доступна кнопка озвучки.
+
+    if (session.mode === "ru-ko") {
+
+        el("quiz-speech-controls").hidden = false;
     }
 
     document.querySelector(
@@ -606,6 +753,8 @@ function nextQuestion() {
         return;
     }
 
+    stopSpeech();
+
     session.index++;
 
     if (session.index >= session.words.length) {
@@ -632,6 +781,8 @@ function finishTraining(early = false) {
     if (!session || session.finished) {
         return;
     }
+
+    stopSpeech();
 
     session.finished = true;
 
@@ -666,8 +817,7 @@ function finishTraining(early = false) {
 
     } else {
 
-        message =
-            "Продолжайте практиковаться.";
+        message = "Продолжайте практиковаться.";
     }
 
     el("quiz").innerHTML = `
@@ -678,15 +828,21 @@ function finishTraining(early = false) {
                 РЕЗУЛЬТАТЫ
             </span>
 
+            <p>
+                ${trainingModeName(session.mode)}
+            </p>
+
             <div class="result-symbol">
                 ${total === 0 ? "—" :
                     accuracy === 100 ? "★" : "✓"}
             </div>
 
             <h1>
+
                 ${early
                     ? "Тренировка остановлена"
                     : "Тренировка завершена"}
+
             </h1>
 
             <p>${escapeHTML(message)}</p>
@@ -740,20 +896,37 @@ function finishTraining(early = false) {
                 <h2>Работа над ошибками</h2>
 
                 ${session.mistakes.map(
-                    mistake => `
+                    (mistake, index) => `
 
                     <div class="mistake-row">
 
-                        <strong lang="ko">
-                            ${escapeHTML(
-                                mistake.korean
-                            )}
-                        </strong>
+                        <div class="mistake-heading">
+
+                            <strong lang="ko">
+
+                                ${escapeHTML(
+                                    mistake.korean
+                                )}
+
+                            </strong>
+
+                            <button
+                                class="mistake-speech-button"
+                                data-speak-mistake="${index}"
+                                aria-label="Прослушать слово">
+
+                                🔊
+
+                            </button>
+
+                        </div>
 
                         <p>
+
                             ${escapeHTML(
                                 mistake.russian
                             )}
+
                         </p>
 
                         <p class="mistake-answer">
@@ -805,7 +978,34 @@ function finishTraining(early = false) {
 
         </button>
 
+        <p id="quiz-speech-message"
+           role="status">
+        </p>
     `;
+
+    // Озвучка слов, в которых были ошибки.
+
+    document.querySelectorAll(
+        "[data-speak-mistake]"
+    ).forEach(button => {
+
+        button.disabled = !speechSupported();
+
+        button.onclick = function () {
+
+            const index = Number(
+                this.dataset.speakMistake
+            );
+
+            const mistake =
+                session.mistakes[index];
+
+            if (mistake) {
+
+                speakKorean(mistake.korean);
+            }
+        };
+    });
 
     const retryButton = el("retry-mistakes");
 
@@ -823,6 +1023,8 @@ function finishTraining(early = false) {
     };
 
     el("return-training").onclick = function () {
+
+        stopSpeech();
 
         const id = session.dictionaryId;
 
@@ -846,6 +1048,8 @@ function restartTraining(onlyMistakes) {
     if (!session) {
         return;
     }
+
+    stopSpeech();
 
     const mode = session.mode;
 
@@ -881,6 +1085,8 @@ function quitTraining() {
         )
     ) {
 
+        stopSpeech();
+
         finishTraining(true);
     }
 }
@@ -892,9 +1098,8 @@ function quitTraining() {
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
 
-        // Создаём отдельную страницу тренировки.
+    function () {
 
         const quiz = document.createElement(
             "section"
@@ -906,15 +1111,19 @@ document.addEventListener(
         document.querySelector(".main")
             .appendChild(quiz);
 
-
-        // Подключаем первые два режима.
+        // Подключаем три режима обучения.
 
         const modeButtons =
             document.querySelectorAll(
                 "#training .mode-card"
             );
 
-        const modes = ["ko-ru", "ru-ko"];
+        const modes = [
+
+            "ko-ru",
+            "ru-ko",
+            "listening"
+        ];
 
         modes.forEach((mode, index) => {
 
@@ -924,16 +1133,16 @@ document.addEventListener(
                 return;
             }
 
-            button.disabled = false;
+            button.disabled =
+
+                mode === "listening" &&
+                !speechSupported();
 
             button.onclick = function () {
 
                 startTraining(mode);
             };
         });
-
-
-        // Обновляем подсказку.
 
         const hint = document.querySelector(
             "#training .hint"
@@ -942,27 +1151,31 @@ document.addEventListener(
         if (hint) {
 
             hint.textContent =
-                "Доступны два режима выбора перевода. " +
-                "Остальные режимы появятся позже.";
+
+                "Доступны перевод в обоих " +
+                "направлениях и аудирование.";
         }
 
-
-        // Контролируем выход из тренировки
-        // через нижнее меню или настройки.
+        // Останавливаем звук при переходах
+        // и контролируем выход из тренировки.
 
         document.addEventListener(
-            "click",
-            function (event) {
 
-                if (currentPage !== "quiz") {
-                    return;
-                }
+            "click",
+
+            function (event) {
 
                 const button = event.target.closest(
                     "[data-page]"
                 );
 
                 if (!button) {
+                    return;
+                }
+
+                if (currentPage !== "quiz") {
+
+                    stopSpeech();
                     return;
                 }
 
@@ -985,7 +1198,6 @@ document.addEventListener(
 
                         "Уже полученные результаты " +
                         "будут сохранены."
-
                     );
 
                     if (!approved) {
@@ -998,15 +1210,22 @@ document.addEventListener(
                     }
                 }
 
+                stopSpeech();
+
                 trainingSession = null;
 
             },
+
             true
         );
 
-        console.log(
-            "Модуль тренировок подключён"
+        window.addEventListener(
+            "pagehide",
+            stopSpeech
         );
 
+        console.log(
+            "Модуль тренировок v0.4 подключён"
+        );
     }
 );

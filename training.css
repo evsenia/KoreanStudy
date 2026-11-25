@@ -398,3 +398,165 @@
         transition: none;
     }
 }
+
+/* ========================================
+   НАСТРОЙКИ ОЗВУЧКИ
+======================================== */
+
+.speech-speed-info {
+    margin: 8px 0 20px;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+}
+
+.speech-speed-info strong {
+    color: var(--primary);
+}
+
+.speech-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    font-size: 15px;
+}
+
+.speech-checkbox input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
+}
+
+
+/* КНОПКА ПРОИЗНОШЕНИЯ */
+
+.speech-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+
+    background: var(--primary);
+    color: white;
+
+    border: none;
+    border-radius: 50%;
+
+    font-size: 27px;
+}
+
+.speech-button:hover {
+    background: var(--primary-hover);
+}
+
+.speech-button:active {
+    transform: scale(0.96);
+}
+
+.speech-caption {
+    color: var(--primary);
+    font-size: 13px;
+}
+
+#quiz-speech-message {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ========================================
+   АУДИРОВАНИЕ И ОЗВУЧКА
+======================================== */
+
+.training-mode-name {
+    margin-top: 4px;
+
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.speech-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.speech-controls[hidden],
+.question-word[hidden] {
+    display: none;
+}
+
+.speech-button {
+    width: 64px;
+    height: 64px;
+
+    flex-shrink: 0;
+
+    box-shadow:
+        0 4px 12px rgba(56, 107, 87, 0.18);
+}
+
+.speech-button:disabled {
+    opacity: 0.45;
+}
+
+.speech-caption {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#quiz-speech-message:empty {
+    display: none;
+}
+
+#quiz-speech-message {
+    max-width: 280px;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+/* Озвучка в результатах тренировки */
+
+.mistake-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.mistake-speech-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 44px;
+    height: 44px;
+
+    background: var(--light-green);
+    color: var(--primary);
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 20px;
+}
+
+.mistake-speech-button:hover {
+    background: #cbdcd0;
+}
+
+.mistake-speech-button:disabled {
+    opacity: 0.45;
+}

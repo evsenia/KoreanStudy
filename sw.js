@@ -1,6 +1,6 @@
 
 const CACHE_PREFIX = "korean-study-";
-const CACHE_NAME = CACHE_PREFIX + "v0.3";
+const CACHE_NAME = CACHE_PREFIX + "v0.4";
 
 const FILES = [
     "./",
@@ -8,13 +8,13 @@ const FILES = [
     "./style.css",
     "./app.js",
     "./storage.js",
+    "./speech.js",
     "./training.js",
     "./training.css",
     "./manifest.json",
     "./icons/icon-192.png",
     "./icons/icon-512.png"
 ];
-
 // Сохранение файлов приложения
 
 self.addEventListener("install", event => {
