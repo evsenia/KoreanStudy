@@ -1,0 +1,531 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#386b57">
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <meta name="apple-mobile-web-app-title" content="Korean Study">
+
+    <title>Korean Study</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="training.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ШАПКА -->
+
+    <header class="header">
+
+        <div class="logo">
+            <span class="logo-korean" lang="ko">한국어</span>
+            <span class="logo-name">Korean Study</span>
+        </div>
+
+        <button class="icon-button"
+                data-page="settings"
+                aria-label="Настройки">
+            ⚙
+        </button>
+
+    </header>
+
+    <main class="main">
+
+        <!-- ГЛАВНАЯ -->
+
+        <section id="home" class="page active">
+
+            <div class="greeting">
+
+                <span class="eyebrow">
+                    ЕЖЕДНЕВНАЯ ПРАКТИКА
+                </span>
+
+                <h1 lang="ko">안녕하세요!</h1>
+
+                <p>
+                    Сегодня отличный день,
+                    чтобы выучить новые слова.
+                </p>
+
+            </div>
+
+            <div id="continue-container"></div>
+
+            <div class="section-heading">
+
+                <h2>Мои словари</h2>
+
+                <button class="text-button"
+                        data-page="dictionaries">
+                    Все словари →
+                </button>
+
+            </div>
+
+            <div id="home-dictionaries"
+                 class="dictionary-list">
+            </div>
+
+            <button class="add-button"
+                    id="home-add-dictionary">
+                + Добавить словарь
+            </button>
+
+        </section>
+
+
+        <!-- СЛОВАРИ -->
+
+        <section id="dictionaries" class="page">
+
+            <h1>Мои словари</h1>
+
+            <p class="page-description">
+                Создавайте собственные наборы слов
+                для изучения корейского языка.
+            </p>
+
+            <div id="dictionary-list"
+                 class="dictionary-list">
+            </div>
+
+            <button class="add-button"
+                    id="add-dictionary">
+                + Создать новый словарь
+            </button>
+
+        </section>
+
+
+        <!-- РЕДАКТОР СЛОВАРЯ -->
+
+        <section id="dictionary-editor" class="page">
+
+            <button class="text-button back-button"
+                    id="editor-back">
+                ← К словарям
+            </button>
+
+            <h1 id="editor-title">Новый словарь</h1>
+
+            <p class="page-description">
+                Добавьте слова удобным способом.
+            </p>
+
+            <article class="content-card">
+
+                <label for="dictionary-name">
+                    Название словаря
+                </label>
+
+                <input type="text"
+                       id="dictionary-name"
+                       placeholder="Например, Числительные">
+
+            </article>
+
+            <article class="content-card">
+
+                <h2>Добавление слов</h2>
+
+                <div class="editor-tabs">
+
+                    <button class="editor-tab active"
+                            data-editor-tab="paste">
+                        Вставить текст
+                    </button>
+
+                    <button class="editor-tab"
+                            data-editor-tab="manual">
+                        Вручную
+                    </button>
+
+                    <button class="editor-tab"
+                            data-editor-tab="file">
+                        Из файла
+                    </button>
+
+                </div>
+
+
+                <!-- ВСТАВКА ТЕКСТА -->
+
+                <div class="editor-panel active"
+                     id="panel-paste">
+
+                    <p class="hint">
+                        Каждая пара слов с новой строки.
+                        Разделитель: точка с запятой.
+                    </p>
+
+                    <textarea id="paste-input"
+                              rows="6"
+                              placeholder="하나;Один&#10;둘;Два&#10;셋;Три">
+                    </textarea>
+
+                    <button class="secondary-button"
+                            id="parse-words">
+                        Добавить слова из текста
+                    </button>
+
+                </div>
+
+
+                <!-- РУЧНОЙ ВВОД -->
+
+                <div class="editor-panel"
+                     id="panel-manual">
+
+                    <label for="korean-input">
+                        Корейское слово
+                    </label>
+
+                    <input type="text"
+                           id="korean-input"
+                           lang="ko"
+                           placeholder="하나">
+
+                    <label for="russian-input">
+                        Перевод
+                    </label>
+
+                    <input type="text"
+                           id="russian-input"
+                           placeholder="Один">
+
+                    <button class="secondary-button"
+                            id="manual-add">
+                        + Добавить слово
+                    </button>
+
+                </div>
+
+
+                <!-- ИМПОРТ ФАЙЛА -->
+
+                <div class="editor-panel"
+                     id="panel-file">
+
+                    <label class="upload-area"
+                           for="dictionary-file">
+
+                        <span class="upload-symbol">↑</span>
+
+                        <strong>Выбрать файл</strong>
+
+                        <small>CSV или TXT, кодировка UTF-8</small>
+
+                    </label>
+
+                    <input type="file"
+                           id="dictionary-file"
+                           accept=".csv,.txt"
+                           hidden>
+
+                    <p class="hint">
+                        Корейское слово и перевод должны
+                        находиться в двух столбцах.
+                    </p>
+
+                </div>
+
+                <p id="editor-message"
+                   class="editor-message"
+                   role="status">
+                </p>
+
+            </article>
+
+
+            <!-- СПИСОК СЛОВ -->
+
+            <article class="content-card">
+
+                <div class="section-heading">
+
+                    <h2>Слова</h2>
+
+                    <span class="word-count"
+                          id="editor-word-count">
+                        0
+                    </span>
+
+                </div>
+
+                <div id="editor-word-list"></div>
+
+            </article>
+
+            <button class="primary-button"
+                    id="save-dictionary">
+                Сохранить словарь
+            </button>
+
+            <button class="secondary-button"
+                    id="cancel-editor">
+                Отмена
+            </button>
+
+        </section>
+
+
+        <!-- ТРЕНИРОВКА -->
+
+        <section id="training" class="page">
+
+            <h1>Тренировка</h1>
+
+            <p class="page-description">
+                Выберите режим изучения слов.
+            </p>
+
+            <label for="dictionary-select">
+                Словарь
+            </label>
+
+            <select id="dictionary-select"></select>
+
+            <div class="training-grid">
+
+                <button class="mode-card" disabled>
+                    <span class="mode-icon">한</span>
+                    <strong>Корейский → русский</strong>
+                    <small>Выберите правильный перевод</small>
+                </button>
+
+                <button class="mode-card" disabled>
+                    <span class="mode-icon">А</span>
+                    <strong>Русский → корейский</strong>
+                    <small>Выберите корейское слово</small>
+                </button>
+
+                <button class="mode-card" disabled>
+                    <span class="mode-icon">♫</span>
+                    <strong>Аудирование</strong>
+                    <small>Распознавайте слова на слух</small>
+                </button>
+
+                <button class="mode-card" disabled>
+                    <span class="mode-icon">▣</span>
+                    <strong>Карточки</strong>
+                    <small>Запоминайте новые слова</small>
+                </button>
+
+                <button class="mode-card" disabled>
+                    <span class="mode-icon">↻</span>
+                    <strong>Работа над ошибками</strong>
+                    <small>Повторяйте сложные слова</small>
+                </button>
+
+                <button class="mode-card" disabled>
+                    <span class="mode-icon">✎</span>
+                    <strong>Письмо</strong>
+                    <small>Вводите слова самостоятельно</small>
+                </button>
+
+            </div>
+
+            <p class="hint">
+                Тренировки подключим на следующем этапе.
+            </p>
+
+        </section>
+
+
+        <!-- СТАТИСТИКА -->
+
+        <section id="statistics" class="page">
+
+            <h1>Моя статистика</h1>
+
+            <p class="page-description">
+                Отслеживайте успехи в изучении языка.
+            </p>
+
+            <div class="statistics-grid">
+
+                <article class="stat-card">
+                    <span class="stat-number"
+                          id="stat-total-words">0</span>
+                    <span>Всего слов</span>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-number"
+                          id="stat-dictionaries">0</span>
+                    <span>Словарей</span>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-number"
+                          id="stat-learned">0</span>
+                    <span>Изучено слов</span>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-number"
+                          id="stat-accuracy">—</span>
+                    <span>Верных ответов</span>
+                </article>
+
+            </div>
+
+            <article class="content-card">
+
+                <h2>Прогресс по словарям</h2>
+
+                <div id="dictionary-progress"></div>
+
+            </article>
+
+        </section>
+
+
+        <!-- НАСТРОЙКИ -->
+
+        <section id="settings" class="page">
+
+            <h1>Настройки</h1>
+
+            <p class="page-description">
+                Персональные настройки обучения.
+            </p>
+
+            <article class="content-card">
+
+                <h2>Озвучка</h2>
+
+                <label for="voice-select">
+                    Корейский голос
+                </label>
+
+                <select id="voice-select" disabled>
+                    <option>Автоматический выбор</option>
+                </select>
+
+                <label for="speech-speed">
+                    Скорость произношения
+                </label>
+
+                <input id="speech-speed"
+                       type="range"
+                       min="0.5"
+                       max="1.5"
+                       step="0.1"
+                       value="0.9"
+                       disabled>
+
+            </article>
+
+            <article class="content-card">
+
+                <h2>Хранение данных</h2>
+
+                <p>
+                    Словари сохраняются в памяти браузера.
+                    Для переноса на другое устройство
+                    используйте экспорт словарей.
+                </p>
+
+            </article>
+
+            <article class="content-card">
+
+                <h2>О приложении</h2>
+
+                <p>Korean Study v0.2</p>
+
+                <p>
+                    Персональный тренажёр корейского языка.
+                </p>
+
+            </article>
+
+        </section>
+
+    </main>
+
+
+    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+
+    <nav class="navigation"
+         aria-label="Основная навигация">
+
+        <button class="nav-button active"
+                data-page="home"
+                aria-current="page">
+            <span class="nav-icon">⌂</span>
+            <span>Главная</span>
+        </button>
+
+        <button class="nav-button"
+                data-page="dictionaries">
+            <span class="nav-icon">▤</span>
+            <span>Словари</span>
+        </button>
+
+        <button class="nav-button"
+                data-page="training">
+            <span class="nav-icon">◎</span>
+            <span>Тренировка</span>
+        </button>
+
+        <button class="nav-button"
+                data-page="statistics">
+            <span class="nav-icon">▥</span>
+            <span>Статистика</span>
+        </button>
+
+    </nav>
+
+</div>
+
+<script src="storage.js"></script>
+<script src="app.js"></script>
+<script src="training.js"></script>
+
+<script>
+    if ("serviceWorker" in navigator) {
+
+        window.addEventListener("load", function () {
+
+            navigator.serviceWorker
+                .register("./sw.js")
+                .then(function () {
+                    console.log("Service Worker подключён");
+                })
+                .catch(function (error) {
+                    console.error("Ошибка Service Worker:", error);
+                });
+
+        });
+
+    }
+</script>
+
+</body>
+</html>
+
+

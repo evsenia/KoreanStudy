@@ -1,0 +1,839 @@
+
+/* ========================================
+   ЦВЕТОВАЯ ПАЛИТРА
+======================================== */
+
+:root {
+    --background: #f6f7f4;
+    --surface: #ffffff;
+    --primary: #386b57;
+    --primary-hover: #2c5645;
+    --accent: #689b82;
+    --light-green: #e5eee8;
+    --text: #26352e;
+    --muted: #7b887f;
+    --border: #e0e6e0;
+    --danger: #b55353;
+    --light-red: #faeeee;
+    --radius: 18px;
+    --shadow: 0 4px 18px rgba(38, 53, 46, 0.05);
+}
+
+
+/* ОБЩИЕ НАСТРОЙКИ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", "Apple SD Gothic Neo",
+                 "Malgun Gothic", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+button:disabled {
+    cursor: default;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+h1,
+h2,
+p {
+    margin: 0;
+}
+
+h1 {
+    font-size: 28px;
+    line-height: 1.3;
+    letter-spacing: -0.7px;
+}
+
+h2 {
+    font-size: 20px;
+    line-height: 1.35;
+}
+
+p {
+    color: var(--muted);
+}
+
+
+/* КОНТЕЙНЕР И ШАПКА */
+
+.app {
+    max-width: 850px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--background);
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-korean {
+    color: var(--primary);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.logo-name {
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 1.5px;
+}
+
+.icon-button {
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--primary);
+    font-size: 23px;
+}
+
+.icon-button:hover {
+    background: var(--light-green);
+}
+
+
+/* СТРАНИЦЫ */
+
+.main {
+    padding: 28px 28px 115px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+    animation: appear 0.2s ease;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-description {
+    margin-top: 10px;
+    margin-bottom: 26px;
+}
+
+.greeting {
+    margin-bottom: 24px;
+}
+
+.greeting h1 {
+    margin: 8px 0;
+    font-size: 36px;
+}
+
+.eyebrow {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+}
+
+
+/* ПРОДОЛЖЕНИЕ ОБУЧЕНИЯ */
+
+.continue-card {
+    padding: 26px;
+    margin-bottom: 32px;
+    background: var(--light-green);
+    border-radius: 24px;
+}
+
+.continue-card h2 {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    overflow-wrap: anywhere;
+}
+
+.continue-card p {
+    font-size: 14px;
+}
+
+.progress-track {
+    height: 9px;
+    margin-top: 24px;
+    background: #cbdcd0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 20px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 9px 0 22px;
+    color: var(--primary);
+    font-size: 12px;
+}
+
+
+/* КНОПКИ */
+
+.primary-button,
+.secondary-button,
+.add-button {
+    width: 100%;
+    min-height: 50px;
+    padding: 14px 18px;
+    border-radius: 13px;
+    font-weight: 600;
+}
+
+.primary-button {
+    color: #ffffff;
+    background: var(--primary);
+    border: none;
+}
+
+.primary-button:not(:disabled):hover {
+    background: var(--primary-hover);
+}
+
+.secondary-button {
+    margin-top: 12px;
+    color: var(--primary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.add-button {
+    margin-top: 18px;
+    color: var(--primary);
+    background: transparent;
+    border: 1.5px dashed var(--accent);
+}
+
+.add-button:not(:disabled):hover,
+.secondary-button:not(:disabled):hover {
+    background: var(--light-green);
+}
+
+.text-button {
+    padding: 8px 0;
+    color: var(--primary);
+    background: none;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.add-button:disabled {
+    opacity: 0.6;
+}
+
+.back-button {
+    margin-bottom: 15px;
+}
+
+
+/* КАРТОЧКИ СЛОВАРЕЙ */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.dictionary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dictionary-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    padding: 16px;
+    text-align: left;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.dictionary-card:hover {
+    border-color: var(--accent);
+}
+
+.dictionary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    background: var(--light-green);
+    color: var(--primary);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.dictionary-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 5px;
+}
+
+.dictionary-info strong {
+    font-size: 15px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.dictionary-info small {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.chevron {
+    color: var(--accent);
+    font-size: 27px;
+}
+
+.dictionary-entry {
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.dictionary-entry .dictionary-card {
+    border: none;
+    box-shadow: none;
+}
+
+.dictionary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+}
+
+.action-button {
+    padding: 9px 12px;
+    color: var(--primary);
+    background: var(--light-green);
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.action-button:hover {
+    filter: brightness(0.96);
+}
+
+.danger-button {
+    color: var(--danger);
+    background: var(--light-red);
+}
+
+.empty-state {
+    padding: 30px 18px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+}
+
+
+/* ПОЛЯ ВВОДА */
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+select,
+input[type="text"],
+textarea {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    padding: 12px 15px;
+    margin-bottom: 16px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+select {
+    margin-bottom: 24px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 130px;
+    line-height: 1.8;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #a0aaa2;
+}
+
+
+/* РЕДАКТОР СЛОВАРЯ */
+
+.editor-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    margin: 18px 0;
+    background: var(--background);
+    border-radius: 12px;
+}
+
+.editor-tab {
+    min-height: 42px;
+    padding: 8px 4px;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+.editor-tab.active {
+    color: var(--primary);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    font-weight: 600;
+}
+
+.editor-panel {
+    display: none;
+}
+
+.editor-panel.active {
+    display: block;
+}
+
+.editor-panel textarea {
+    margin-top: 15px;
+}
+
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 16px;
+    color: var(--primary);
+    background: var(--background);
+    border: 1.5px dashed var(--accent);
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: center;
+}
+
+.upload-symbol {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.upload-area small {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.editor-message {
+    color: var(--primary);
+    font-size: 13px;
+}
+
+.editor-message:not(:empty) {
+    margin-top: 16px;
+}
+
+.editor-message.error {
+    color: var(--danger);
+}
+
+.word-count {
+    padding: 4px 13px;
+    color: var(--primary);
+    background: var(--light-green);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.word-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 40px;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.word-row:last-child {
+    border-bottom: none;
+}
+
+.word-row input {
+    margin: 0;
+    padding: 10px;
+}
+
+.word-row .korean-word {
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.remove-word {
+    width: 40px;
+    height: 42px;
+    color: var(--danger);
+    background: var(--light-red);
+    border: none;
+    border-radius: 10px;
+    font-size: 23px;
+}
+
+
+/* РЕЖИМЫ ТРЕНИРОВКИ */
+
+.training-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.mode-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 160px;
+    padding: 20px;
+    text-align: left;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.mode-card:not(:disabled):hover {
+    border-color: var(--accent);
+    background: var(--light-green);
+}
+
+.mode-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 46px;
+    height: 46px;
+    background: var(--light-green);
+    color: var(--primary);
+    border-radius: 12px;
+    font-size: 25px;
+}
+
+.mode-card strong {
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.mode-card small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.hint {
+    margin-top: 12px;
+    font-size: 12px;
+}
+
+
+/* СТАТИСТИКА */
+
+.statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 24px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.stat-number {
+    color: var(--primary);
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.dictionary-progress-item {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+    overflow-wrap: anywhere;
+}
+
+.dictionary-progress-item:last-child {
+    border-bottom: none;
+}
+
+.dictionary-progress-item .progress-track {
+    margin-top: 10px;
+}
+
+.dictionary-progress-item .progress-info {
+    margin-bottom: 0;
+}
+
+
+/* ОБЫЧНЫЕ КАРТОЧКИ */
+
+.content-card {
+    padding: 22px;
+    margin-bottom: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.content-card h2 {
+    margin-bottom: 16px;
+}
+
+.content-card .section-heading h2 {
+    margin-bottom: 0;
+}
+
+.content-card p {
+    margin-top: 8px;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--primary);
+}
+
+
+/* НИЖНЯЯ НАВИГАЦИЯ */
+
+.navigation {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    max-width: 850px;
+    padding: 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    z-index: 100;
+}
+
+.nav-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 56px;
+    min-width: 0;
+    padding: 6px 2px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.nav-icon {
+    font-size: 27px;
+    line-height: 1;
+}
+
+.nav-button.active {
+    background: var(--light-green);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+
+/* АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
+
+@media (max-width: 600px) {
+
+    .header {
+        padding: 18px 20px;
+    }
+
+    .main {
+        padding: 22px 18px 125px;
+    }
+
+    .greeting h1 {
+        font-size: 32px;
+    }
+
+    .continue-card {
+        padding: 20px;
+    }
+
+    .dictionary-card {
+        padding: 13px;
+        gap: 12px;
+    }
+
+    .dictionary-icon {
+        width: 46px;
+        height: 46px;
+    }
+
+    .training-grid {
+        gap: 10px;
+    }
+
+    .mode-card {
+        padding: 15px;
+        min-height: 150px;
+    }
+
+    .nav-button {
+        font-size: 10px;
+    }
+
+    .content-card {
+        padding: 16px;
+    }
+
+    .editor-tab {
+        font-size: 11px;
+    }
+
+    .word-row {
+        grid-template-columns: 1fr 1fr 34px;
+        gap: 6px;
+    }
+
+    .word-row input {
+        padding: 8px 6px;
+    }
+
+    .remove-word {
+        width: 34px;
+    }
+}
+
+@media (max-width: 350px) {
+
+    .training-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-heading {
+        flex-wrap: wrap;
+    }
+
+    .nav-button {
+        font-size: 9px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .page.active {
+        animation: none;
+    }
+}
